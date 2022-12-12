@@ -9,4 +9,9 @@ public interface MemberRepository extends JpaRepository<Member,String> {  //tabl
     
     Optional<Member> findByEmailAuthKey(String emailAuthKey);  //메서드를 정의만 하면 스프링이 알아서 구현체를 만들어줌
 
+    Optional<Member> findByUserIdAndUserName(String userId, String userName);
+
+    Optional<Member> findByResetPasswordKey(String resetPasswordKey);
+
+
 }

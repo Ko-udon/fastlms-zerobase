@@ -24,6 +24,11 @@ spring:
             enable: true
 
 
+logging:
+  level:
+    root: info
+
+
 
 
 

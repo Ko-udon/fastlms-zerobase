@@ -35,7 +35,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/"
                         ,"/member/register"
-                ,"/member/email-auth")
+                ,"/member/email-auth"
+                ,"/member/find-password"
+                ,"/member/reset/password")
                         .permitAll();  //스프링 부트 security로그인 필요없이 다른 모든 파일을 바로 접근 가능하게 ㅎ한다. 패턴 등록
 
         http.formLogin()
