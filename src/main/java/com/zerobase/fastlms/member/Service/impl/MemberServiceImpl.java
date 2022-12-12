@@ -78,9 +78,13 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> optionalMember= memberRepository.findByEmailAuthKey(uuid);
 
         if(!optionalMember.isPresent()){
-            throw new UsernameNotFoundException("회원 정보가 존재하지 않습니다.");
+            return false;
         }
         Member member=optionalMember.get();
+
+        if(member.isEmailAuthYn()){
+            return false; //이미 해당 계정이 활성화 되었으므로 재 활성화시 false
+        }
 
         member.setEmailAuthYn(true);
         member.setEmailAuthDt(LocalDateTime.now());
@@ -170,7 +174,11 @@ public class MemberServiceImpl implements MemberService {
         }
 
         List<GrantedAuthority> grantedAuthorities=new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));  //디폴트 롤
+        
+        if(member.isAdminYn()){
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));  //관리자 롤
+        }
 
         return new User(member.getUserId(),member.getPassword(),grantedAuthorities);
     }

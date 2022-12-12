@@ -3,6 +3,7 @@ package com.zerobase.fastlms.main.controller;
 import com.zerobase.fastlms.components.MailComponents;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -10,6 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MainController {
 
     private final MailComponents mailComponents;
+
+    @RequestMapping("/")
+    public String index(){
+        return "index";
+    }
 
     /*@RequestMapping("/")
     public String index(){
@@ -19,6 +25,9 @@ public class MainController {
         mailComponents.sendMail(email,subject,text);
         return "index"; 메일보내기 테스트
     }*/
-
+    @RequestMapping("/error/denied")
+    public String errorDenied(){
+        return "error/denied";
+    }
 
 }
