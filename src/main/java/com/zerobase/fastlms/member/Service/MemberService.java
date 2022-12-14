@@ -24,4 +24,5 @@ public interface MemberService extends UserDetailsService {
 
     List<MemberDto> list(MemberParam parameter);  //회원 목록 리턴(관리자 계정만 사용 가능)
 
+    MemberDto detail(String userId);  //회원 상세 정보
 }
