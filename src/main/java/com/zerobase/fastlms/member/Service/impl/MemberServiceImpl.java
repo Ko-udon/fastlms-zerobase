@@ -7,6 +7,7 @@ import com.zerobase.fastlms.components.MailComponents;
 import com.zerobase.fastlms.member.Service.MemberService;
 import com.zerobase.fastlms.member.entity.Member;
 import com.zerobase.fastlms.member.exception.MemberNotEmailAuthException;
+import com.zerobase.fastlms.member.exception.MemberStopUserException;
 import com.zerobase.fastlms.member.model.MemberInput;
 import com.zerobase.fastlms.member.model.ResetPasswordInput;
 import com.zerobase.fastlms.member.repository.MemberRepository;
@@ -40,7 +41,7 @@ public class MemberServiceImpl implements MemberService {
             //현재 userId에 해당하는 데이터가 존재한다면, 아이디가 중복이라면
             return false;
         }
-        String encPassword= BCrypt.hashpw(parameter.getPassword(),BCrypt.gensalt());
+        String encPassword= BCrypt.hashpw(parameter.getPassword(),BCrypt.gensalt());  //비밀번호 해쉬 암호화
 
 
         String uuid=UUID.randomUUID().toString();
@@ -53,6 +54,7 @@ public class MemberServiceImpl implements MemberService {
                 .regDt(LocalDateTime.now())
                 .emailAuthYn(false)
                 .emailAuthKey(uuid)
+                .userStatus(Member.MEMBER_STATUS_REQ)
                 .build();
         memberRepository.save(member);
         
@@ -77,7 +79,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public boolean emailAuth(String uuid) {
+    public boolean emailAuth(String uuid) { //이메일 인증 활성화
         Optional<Member> optionalMember= memberRepository.findByEmailAuthKey(uuid);
 
         if(!optionalMember.isPresent()){
@@ -89,6 +91,7 @@ public class MemberServiceImpl implements MemberService {
             return false; //이미 해당 계정이 활성화 되었으므로 재 활성화시 false
         }
 
+        member.setUserStatus(Member.MEMBER_STATUS_ING);
         member.setEmailAuthYn(true);
         member.setEmailAuthDt(LocalDateTime.now());
         memberRepository.save(member);
@@ -197,15 +200,50 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public boolean updateStatus(String userId, String userStatus) {
+        Optional<Member>  optionalMember=memberRepository.findById(userId);
+        if(!optionalMember.isPresent()){
+            throw new UsernameNotFoundException("회원 정보가 존재하지 않습니다.");
+        }
+        Member member=optionalMember.get();
+
+        member.setUserStatus(userStatus);
+        memberRepository.save(member);
+
+        return true;
+    }
+
+    @Override
+    public boolean updatePassword(String userId, String password) {
+        Optional<Member>  optionalMember=memberRepository.findById(userId);
+        if(!optionalMember.isPresent()){
+            throw new UsernameNotFoundException("회원 정보가 존재하지 않습니다.");
+        }
+        Member member=optionalMember.get();
+
+        String encPassword=BCrypt.hashpw(password,BCrypt.gensalt());
+
+        member.setPassword(encPassword);
+        memberRepository.save(member);
+
+        return true;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { //넘어오는 값은 username, 이메일임
         Optional<Member>  optionalMember=memberRepository.findById(username);
         if(!optionalMember.isPresent()){
             throw new UsernameNotFoundException("회원 정보가 존재하지 않습니다.");
         }
         Member member=optionalMember.get();
-        if(!member.isEmailAuthYn()){
+
+        if(Member.MEMBER_STATUS_REQ.equals(member.getUserStatus())){
             throw new MemberNotEmailAuthException("이메일 활성화 이후에 로그인을 해주세요.");
         }
+        if(Member.MEMBER_STATUS_STOP.equals(member.getUserStatus())){
+            throw new MemberStopUserException("정지된 회원 입니다.");
+        }
+
 
         List<GrantedAuthority> grantedAuthorities=new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));  //디폴트 롤
