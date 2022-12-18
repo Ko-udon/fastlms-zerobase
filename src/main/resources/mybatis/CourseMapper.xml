@@ -2,7 +2,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zerobase.fastlms.admin.mapper.MemberMapper">
+<mapper namespace="com.zerobase.fastlms.course.mapper.CourseMapper">
+
     <sql id="selectListWhere">
         <if test="searchType != null and searchValue != null">
             <choose>
@@ -29,15 +30,14 @@
             </choose>
 
         </if>
-
     </sql>
 
     <select id="selectListCount"
             resultType="long">
         select count(*)
-        from member
+        from course
         where 1=1
-            <include refid="selectListWhere"></include>   <!-- 위에 sql 스크립트를 보면 동일한 부분을 하나로 묶어 refid값을 가져와 중복처리를 함 보다 더 간단하게-->
+        <include refid="selectListWhere"></include>
 
 
 
@@ -45,14 +45,13 @@
     </select>
 
     <select id="selectList"
-            parameterType="com.zerobase.fastlms.admin.model.MemberParam"
-            resultType="com.zerobase.fastlms.admin.dto.MemberDto">
+            resultType="com.zerobase.fastlms.course.dto.CourseDto">
         select *
-        from member
+        from course
         where 1=1
-
-
         <include refid="selectListWhere"></include>
+
+
         limit #{pageStart},#{pageEnd}  <!-- MemberParam 인터페이스로 부터 해당 값을 가져오 ㅁ-->
 
     </select>
