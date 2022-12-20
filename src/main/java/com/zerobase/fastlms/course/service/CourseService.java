@@ -12,4 +12,8 @@ public interface CourseService {
     boolean add(CourseInput parameter);
 
     List<CourseDto> list(CourseParam parameter);  //강좌 목록
+
+    CourseDto getById(long id);  //강좌 상세 정보
+
+    boolean set(CourseInput parameter);  //강좌 정보 수정
 }
