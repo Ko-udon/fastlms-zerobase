@@ -16,4 +16,6 @@ public interface CourseService {
     CourseDto getById(long id);  //강좌 상세 정보
 
     boolean set(CourseInput parameter);  //강좌 정보 수정
+
+    boolean del(String idList);  //강좌 내용 삭제
 }

@@ -19,6 +19,19 @@
       font-weight: bold;
       color:red;
     }
+    .list .buttons{
+      padding: 10px 0;
+    }
+    .list .buttons a, .buttons button{
+      border-width: 0;
+      background-color: transparent;
+      text-decoration: underline;
+      font-size: 14px;
+      line-height: 20px;
+      height: 20px;
+      color: #000;
+      cursor:pointer;
+    }
 
 
   </style>
@@ -37,16 +50,19 @@
   <div th:replace="/fragments/layout.html :: fragment-admin-body-menu"></div>
 
 
-<div>
-  <a href="/admin/course/add.do"> 강좌 등록 </a>
-</div>
 
 
   <div class="list">
+    <div class="buttons">
+      <a href="/admin/course/add.do"> 강좌 등록 </a>
+
+      <button type="button">선택 삭제</button>
+    </div>
 
     <table>
       <thead>
       <tr>
+        <input type="checkbox" />
         <th>ID</th>
         <th>
           강좌명
@@ -58,6 +74,9 @@
       </thead>
 
       <tr th:each="x:${list}">
+        <td>
+          <input type="checkbox" />
+        </td>
 
         <td th:text="${x.seq}">1</td>
         <td>
