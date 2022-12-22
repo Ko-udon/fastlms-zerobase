@@ -133,7 +133,7 @@
         <tr th:each="x : ${list}">
             <td th:text="${x.seq}">1</td>
             <td>
-                <p th:text="${x.regDt}">2021.01.01</p>
+                <p th:text="${x.regDtText}">2021.01.01</p>
             </td>
             <td>
                 <p th:text="${x.subject}">강좌명 </p>
@@ -153,14 +153,13 @@
                 <p th:if="${x.status eq 'COMPLETE'}">결재완료</p>
                 <p th:if="${x.status eq 'CANCEL'}">수강취소</p>
             </td>
-            <!--
             <td>
                 <div class="row-buttons" th:if="${x.status eq 'REQ'}">
                     <input type="hidden" name="id" th:value="${x.id}"/>
                     <button value="COMPLETE" type="button">결재완료 처리</button>
                     <button value="CANCEL" type="button">수강취소 처리</button>
                 </div>
-            </td>-->
+            </td>
         </tr>
         <tr th:if="${#lists.size(list) < 1}">
             <td colspan="8" >
