@@ -1,5 +1,6 @@
 package com.zerobase.fastlms.member.model;
 
+import com.zerobase.fastlms.course.model.ServiceResult;
 import lombok.Data;
 import lombok.ToString;
 
@@ -12,4 +13,8 @@ public class MemberInput {
     private String userName;
     private String password;
     private String phone;
+
+    private String newPassword;
+
+
 }

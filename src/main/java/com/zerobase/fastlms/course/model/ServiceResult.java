@@ -7,7 +7,7 @@ public class ServiceResult {
     boolean result;
     String message;
     public ServiceResult(){
-
+        result=true;
     }
 
 

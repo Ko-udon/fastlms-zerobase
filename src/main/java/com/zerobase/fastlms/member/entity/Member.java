@@ -33,6 +33,7 @@ public class Member implements MemberCode {
 
     private String resetPasswordKey;
     private LocalDateTime resetPasswordLimitDt;
+    private LocalDateTime updDt;
 
     //관리자 여부 지정
     //회원에 따를 ROLE을 지정할것인가

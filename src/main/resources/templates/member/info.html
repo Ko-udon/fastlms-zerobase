@@ -6,8 +6,90 @@
 </head>
 <body>
   <h1> 회원 정보 </h1>
-  <div th:replace="/fragments/layout.html :: fragment-body-menu">
-  </div>
+  <div th:replace="/fragments/layout.html :: fragment-body-menu"> </div>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+      <script>
+          $(function() {
+
+              $('#updateForm').on('submit', function() {
+
+                  if (!confirm('회원 정보를 수정하시겠습니까?')) {
+                      return false;
+                  }
+
+              });
+
+          });
+      </script>
+
+    <div>
+        <hr/>
+        <a href="/member/info">회원 정보 수정</a>
+        |
+        <a href="/member/password">비밀번호 변경</a>
+        |
+        <a href="/member/takecourse">수강 목록</a>
+        <hr/>
+    </div>
+
+    <div>
+        <form id="updateForm" method="post">
+        <table>
+            <tbody>
+            <tr>
+                <th>아이디(이메일)</th>
+                <td>
+                    <p th:text="${detail.userId}">아이디</p>
+                </td>
+            </tr>
+            <tr>
+                <th>이름</th>
+                <td>
+                    <p th:text="${detail.userName}">이름</p>
+                </td>
+            </tr>
+            <tr>
+                <th>전화번호</th>
+                <td>
+                    <input name="phone" type="text" th:value="${detail.phone}"/>
+                </td>
+            </tr>
+            <tr>
+                <!--<th>주소</th>
+                <td>
+                    <div>
+                        <input type="text" id="zipcode" name="zipcode" th:value="${detail.zipcode}" readonly placeholder="우편번호 입력"/>
+                        <button onclick="execDaumPostcode()" type="button"> 우편번호 찾기 </button>
+                    </div>
+                    <div>
+                        <input type="text" id="addr" name="addr" th:value="${detail.addr}" readonly placeholder="주소 입력" />
+                        <input type="text" id="addrDetail" name="addrDetail" th:value="${detail.addrDetail}" placeholder="주소 상세내용 입력" />
+                    </div>
+                </td>-->
+            </tr>
+
+            <tr>
+                <th>가입일</th>
+                <td>
+                    <p th:text="${detail.regDtText}">가입일</p>
+                </td>
+            </tr>
+            <tr>
+                <th>회원정보 수정일</th>
+                <td>
+                    <p th:text="${detail.udtDtText}">전화번호</p>
+                </td>
+            </tr>
+            </tbody>
+
+        </table>
+        <div>
+            <button type="submit">수정</button>
+            <a href="/member/withdraw"> 회원 탈퇴 </a>
+        </div>
+        </form>
+
+    </div>
 
 
 </body>

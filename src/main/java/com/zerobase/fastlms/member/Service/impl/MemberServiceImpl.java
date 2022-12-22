@@ -4,6 +4,7 @@ import com.zerobase.fastlms.admin.dto.MemberDto;
 import com.zerobase.fastlms.admin.mapper.MemberMapper;
 import com.zerobase.fastlms.admin.model.MemberParam;
 import com.zerobase.fastlms.components.MailComponents;
+import com.zerobase.fastlms.course.model.ServiceResult;
 import com.zerobase.fastlms.member.Service.MemberService;
 import com.zerobase.fastlms.member.entity.Member;
 import com.zerobase.fastlms.member.exception.MemberNotEmailAuthException;
@@ -229,6 +230,8 @@ public class MemberServiceImpl implements MemberService {
         return true;
     }
 
+
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { //넘어오는 값은 username, 이메일임
         Optional<Member>  optionalMember=memberRepository.findById(username);
@@ -254,4 +257,42 @@ public class MemberServiceImpl implements MemberService {
 
         return new User(member.getUserId(),member.getPassword(),grantedAuthorities);
     }
+
+    @Override
+    public ServiceResult updateMemberPassword(MemberInput parameter) {
+        String userId=parameter.getUserId();
+
+        Optional<Member> optionalMember=memberRepository.findById(userId);
+        if(!optionalMember.isPresent()){
+            return new ServiceResult(false,"회원 정보가 존재하지 않습니다.");
+        }
+
+        Member member=optionalMember.get();
+
+        if(!BCrypt.checkpw(parameter.getPassword(),member.getPassword())){
+            return new ServiceResult(false,"비밀번호가 일치하지 않습니다.");
+        }
+        String encPassword=BCrypt.hashpw(parameter.getNewPassword(),BCrypt.gensalt());
+        member.setPassword(encPassword);
+        memberRepository.save(member);
+
+        return new ServiceResult(true);
+    }
+
+    @Override
+    public ServiceResult updateMember(MemberInput parameter) {
+        String userId=parameter.getUserId();
+
+        Optional<Member> optionalMember=memberRepository.findById(userId);
+        if(!optionalMember.isPresent()){
+            return new ServiceResult(false,"회원 정보가 존재하지 않습니다.");
+        }
+
+        Member member=optionalMember.get();
+        member.setPhone(parameter.getPhone());
+        member.setUpdDt(LocalDateTime.now());
+        memberRepository.save(member);
+        return new ServiceResult(true);
+    }
+
 }
