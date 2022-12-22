@@ -5,10 +5,36 @@
     <title>fastlms</title>
 </head>
 <body>   <!-- 공통적으로 쓰이는 페이지 양식이므로 fragment로 등록 및 사용-->
-  <div th:fragment="fragment-body-menu">
+  <div th:fragment="fragment-admin-body-menu">
+      <div>
+          <a href="/admin/main.do"> 관리자 메인</a>
+          |
+          <a href="/admin/member/list.do"> 회원 관리 </a>
+          |
+          <a href="/admin/category/list.do"> 카테고리 관리 </a>
+          |
+          <a href="/admin/course/list.do"> 강의 관리 </a>
+          |
+          <a href="/member/logout">로그아웃 </a>
 
+          <br/>
+      </div>
 
   </div>
+
+    <div th:fragment="fragment-body-menu">
+        <div>
+            <a href="/member/register">회원 가입</a>
+            |
+            <a href="/member/info">회원 정보</a>
+            |
+            <a href="/member/login">로그인</a>
+            |
+            <a href="/member/logout">로그아웃</a>
+        </div>
+        <hr/>
+
+</div>
 
 </body>
 </html>
