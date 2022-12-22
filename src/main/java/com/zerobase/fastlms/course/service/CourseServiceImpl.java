@@ -136,4 +136,32 @@ public class CourseServiceImpl implements CourseService {
         return true;
     }
 
+    @Override
+    public List<CourseDto> frontList(CourseParam parameter) {
+        if(parameter.getCategoryId() < 1){
+            List<Course> courseList=courseRepository.findAll();
+            return CourseDto.of(courseList);
+        }
+
+
+        Optional<List<Course>> optionalCourse=courseRepository.findByCategoryId(parameter.getCategoryId());
+        if(optionalCourse.isPresent()){
+            return CourseDto.of(optionalCourse.get());
+        }
+        return null;
+        //람다식
+        //위 5줄을 아래 한줄로 표현 가능
+        //return courseRepository.findByCategoryId(parameter.getCategoryId()).map(CourseDto::of).orElse(null);
+    }
+
+    @Override
+    public CourseDto frontDetail(long id) {
+        Optional<Course> optionalCourse=courseRepository.findById(id);
+        if(optionalCourse.isPresent()){
+            return CourseDto.of(optionalCourse.get());
+        }
+        return null;
+    }
+
+
 }

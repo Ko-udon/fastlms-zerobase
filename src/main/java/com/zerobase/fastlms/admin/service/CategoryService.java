@@ -15,6 +15,8 @@ public interface CategoryService {
 
     boolean update(CategoryInput parameter);
 
+    List<CategoryDto> frontList(CategoryDto parameter);  //front 카테고리 정보
+
 
 
 }

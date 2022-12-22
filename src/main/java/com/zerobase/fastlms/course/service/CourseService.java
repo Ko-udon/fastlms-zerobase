@@ -18,4 +18,9 @@ public interface CourseService {
     boolean set(CourseInput parameter);  //강좌 정보 수정
 
     boolean del(String idList);  //강좌 내용 삭제
+
+    List<CourseDto> frontList(CourseParam courseParam);  //프론트 강좌 목록
+
+
+    CourseDto frontDetail(long id);  //프론트 강좌 상세 정보
 }
