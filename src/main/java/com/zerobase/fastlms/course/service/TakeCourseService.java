@@ -15,4 +15,10 @@ public interface TakeCourseService {
     ServiceResult updateStatus(long id,String status); //수강내용 상태 변경
 
 
+    List<TakeCourseDto> myCourse(String userId);  //내 수강 내역
+
+    TakeCourseDto detail(long id); //수강 상세 정보
+
+    ServiceResult cancel(long id);  //수강 신청 취소 처리
+
 }

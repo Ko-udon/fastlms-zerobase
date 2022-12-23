@@ -1,5 +1,6 @@
 package com.zerobase.fastlms.course.entity;
 
+import com.zerobase.fastlms.course.dto.TakeCourseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

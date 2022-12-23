@@ -2,13 +2,16 @@ package com.zerobase.fastlms.member.controller;
 
 
 import com.zerobase.fastlms.admin.dto.MemberDto;
+import com.zerobase.fastlms.course.dto.TakeCourseDto;
 import com.zerobase.fastlms.course.model.ServiceResult;
+import com.zerobase.fastlms.course.service.TakeCourseService;
 import com.zerobase.fastlms.member.Service.MemberService;
 import com.zerobase.fastlms.member.entity.Member;
 import com.zerobase.fastlms.member.model.MemberInput;
 import com.zerobase.fastlms.member.model.ResetPasswordInput;
 import com.zerobase.fastlms.member.repository.MemberRepository;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +28,7 @@ import java.time.LocalDateTime;
 public class MemberController {
 
     private final MemberService memberService;
+    private final TakeCourseService takeCourseService;
 
     @GetMapping("/member/find-password")
     public String findPassword(){
@@ -130,8 +134,11 @@ public class MemberController {
     @GetMapping("/member/takecourse")
     public String memberTakecourse(Model model,Principal principal){
         String userId=principal.getName();
-        MemberDto detail=memberService.detail(userId);
-        model.addAttribute("detail",detail);
+
+
+        List<TakeCourseDto> list=takeCourseService.myCourse(userId);
+
+        model.addAttribute("list",list);
 
         return "member/takecourse";
     }

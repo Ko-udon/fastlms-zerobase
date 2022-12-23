@@ -42,7 +42,7 @@
 
     </select>
 
-    <!-- userId에 해당하는 수강신청 정보
+     <!--userId에 해당하는 수강신청 정보-->
     <select id="selectListMyCourse" resultType="com.zerobase.fastlms.course.dto.TakeCourseDto">
         select tc.*
         , c.subject
@@ -51,6 +51,6 @@
         where tc.user_id = #{userId}
         order by reg_dt desc
 
-    </select>-->
+    </select>
 
 </mapper>
