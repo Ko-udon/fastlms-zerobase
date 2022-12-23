@@ -98,7 +98,7 @@
     <div class="buttons">
         <select id="searchCourseId">
             <option value="">전체 강좌</option>
-            <option th:each="x : ${courseList}"
+            <option th:each="x :${courseList}"
                     th:selected="${#strings.equals(param.searchCourseId, x.id)}"
                     th:value="${x.id}" th:text="${x.subject}">자바 프로그래밍</option>
         </select>
