@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 화면</title>
+  <style>
+    .detail table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .detail table th, .detail table td {
+      border:solid 1px #000;
+    }
+    .buttons{
+      margin-top: 20px;
+      text-align: center;
+    }
+    .buttons a, .buttons button{
+      border-width: 0;
+      background-color: transparent;
+      text-decoration: underline;
+      font-size: 12px;
+      line-height: 20px;
+      height: 20px;
+      color: #000;
+      cursor:pointer;
+    }
+
+
+
+  </style>
+  <script
+          src="https://code.jquery.com/jquery-3.6.2.js"
+          integrity="sha256-pkn2CUZmheSeyssYw3vMp1+xyub4m+e+QK4sQskvuo4="
+          crossorigin="anonymous"></script>
+  <script>
+    $(document).ready(function(){
+      $('#submitForm').on('submit',function(){
+        oEditors.getById["contents"].exec("UPDATE_CONTENTS_FIELD",[]);
+
+
+      });
+    });
+
+  </script>
+
+
+</head>
+
+<body>   <!-- 공통적으로 쓰이는 페이지 양식이므로 fragment로 등록 및 사용-->
+<h1>관리자 배너 관리 화면 - 배너 등록</h1>
+<div th:replace="/fragments/layout.html :: fragment-admin-body-menu"></div>
+<div class="detail">
+
+  <form id="submitForm" method="post" enctype="multipart/form-data">
+
+    <table>
+      <thead>
+      <tr>
+        <th>배너명</th>
+        <td>
+          <input th:value="${detail.bannerName}" type="text" name="bannerName" required placeholder="배너명 입력" />
+
+        </td>
+      </tr>
+
+      <tr>
+        <th>
+          배너파일
+        </th>
+        <td>
+          <input type="file" name="file" />
+        </td>
+      </tr>
+      <tr>
+        <th>
+          링크주소
+        </th>
+        <td>
+          <input th:value="${detail.urlName}" type="text" name="urlName" required placeholder="배너 링크주소 입력" />
+        </td>
+      </tr>
+      <tr>
+        <th>
+          오픈 방법
+        </th>
+        <td>
+          <select name="openType" required>
+            <option value="">오픈 방법 선택</option>
+            <!--<option th:selected="${detail.categoryId == x.id}"
+                    th:each="x : ${category}" th:value="${x.id}" th:text="${x.categoryName}"> 기획 </option>-->
+            <option >내용</option>
+          </select>
+
+        </td>
+      </tr>
+
+      <tr>
+        <th>
+          정렬 순서
+        </th>
+        <td>
+          <input th:value="${detail.seq}" type="text" name="seq" required placeholder="정렬 순서 입력" />
+
+        </td>
+      </tr>
+
+      <tr>
+        <th>
+          공개 여부
+        </th>
+        <td>
+          <input th:checked="${detail.isPublic()}" type="checkbox" th:id="'isPublic_'" th:name="'isPublic_' + ${detail.id}" value="true"/>
+          <label th:for="'usingYn_'+${detail.id}">사용</label>
+        </td>
+      </tr>
+
+
+      </thead>
+    </table>
+
+    <div class="buttons">
+      <button th:if="${editMode}" type="submit"> 배너 수정 하기 </button>
+      <button th:if="${!editMode}" type="submit"> 배너 등록 하기 </button>
+      <a href="/admin/banner/list.do"> 목록 이동 </a>
+    </div>
+
+
+  </form>
+</div>
+
+
+
+  <script type="text/javascript" src="/res/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
+<script type="text/javascript">
+  var oEditors = [];
+  nhn.husky.EZCreator.createInIFrame({
+    oAppRef: oEditors,
+    elPlaceHolder: "contents",
+    sSkinURI: "/res/se2/SmartEditor2Skin.html",
+    fCreator: "createSEditor2"
+  });
+</script>
+
+</body>
+</html>
