@@ -11,6 +11,13 @@
     .detail table th, .detail table td{
       border:solid 1px #000;
     }
+    .list table{
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .list table th, .list table td{
+      border:solid 1px #000;
+    }
   </style>
 
 </head>
@@ -100,8 +107,51 @@
       </tbody>
     </table>
     <div>
-      <a href="list.do">목록z</a>
+      <a href="list.do">목록</a>
     </div>
+  </div>
+
+<div class="list">
+      <table>
+        <thead>
+        <tr>
+          <th>
+            로그인 일자
+          </th>
+          <th>
+            접속IP
+          </th>
+          <th>
+            접속 UserAgent
+          </th>
+        </thead>
+
+
+    <tbody>
+
+
+    <tr th:each="x:${loginHistory}">
+
+        <p th:if="${x.userId == member.userId}">
+          <td>
+            <a th:text="${x.lastLogin}"></a>
+          </td>
+
+          <td>
+            <a th:text="${x.clientIp}"></a>
+          </td>
+
+          <td>
+            <a th:text="${x.userAgent}"></a>
+          </td>
+        </p>
+
+    </tr>
+
+    </tbody>
+  </table>
+
+
 
 
 <!--    <div th:text="${member}">

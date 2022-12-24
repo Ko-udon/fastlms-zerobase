@@ -39,4 +39,7 @@ public interface MemberService extends UserDetailsService {
 
 
     ServiceResult withdraw(String userId,String password);  //회원을 탈퇴시켜 주는 로직
+
+
+    boolean login(String userId); //로그인
 }

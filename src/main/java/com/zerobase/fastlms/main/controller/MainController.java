@@ -1,19 +1,84 @@
 package com.zerobase.fastlms.main.controller;
 
 import com.zerobase.fastlms.components.MailComponents;
+import com.zerobase.fastlms.member.entity.Member;
+import com.zerobase.fastlms.member.repository.MemberRepository;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.RequestUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
+@Data
 public class MainController {
 
     private final MailComponents mailComponents;
+    private final MemberRepository memberRepository;
+
+    String userAgent;
+    String clientIp;
+
+
+
 
     @RequestMapping("/")
-    public String index(){
+    public String index(HttpServletRequest request){
+        //과제 1
+
+        userAgent=request.getHeader("User-Agent");
+        clientIp = request.getHeader("X-Forwarded-For");
+        /*log.info("X-FORWARDED-FOR : " + ip);*/
+
+        if (clientIp == null) {
+            clientIp = request.getHeader("Proxy-Client-IP");
+            log.info("Proxy-Client-IP : " + clientIp);
+        }
+        if (clientIp == null) {
+            clientIp = request.getHeader("WL-Proxy-Client-IP");
+            log.info("WL-Proxy-Client-IP : " + clientIp);
+        }
+        if (clientIp == null) {
+            clientIp = request.getHeader("HTTP_CLIENT_IP");
+            log.info("HTTP_CLIENT_IP : " + clientIp);
+        }
+        if (clientIp == null) {
+            clientIp = request.getHeader("HTTP_X_FORWARDED_FOR");
+            log.info("HTTP_X_FORWARDED_FOR : " + clientIp);
+        }
+        if (clientIp == null) {
+            clientIp = request.getRemoteAddr();
+            log.info("getRemoteAddr : "+clientIp);
+        }
+        log.info("Result : IP Address : "+clientIp);
+
+
+        log.info(userAgent);
+        log.info(clientIp);
+
+
+        /*String id=request.getParameter("username");
+        if(id!=null){
+            Optional<Member> optionalMember=memberRepository.findById(request.getParameter("username"));
+            Member member=optionalMember.get();
+            member.setUserAgent(userAgent);
+            member.setClientIp(clientIp);
+            memberRepository.save(member);
+
+
+        }else{
+            System.out.println("id가 null 입니다#########");
+        }*/
+
+
         return "index";
     }
 

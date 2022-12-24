@@ -5,15 +5,19 @@ import com.zerobase.fastlms.admin.mapper.MemberMapper;
 import com.zerobase.fastlms.admin.model.MemberParam;
 import com.zerobase.fastlms.components.MailComponents;
 import com.zerobase.fastlms.course.model.ServiceResult;
+import com.zerobase.fastlms.main.controller.MainController;
 import com.zerobase.fastlms.member.Service.MemberService;
+import com.zerobase.fastlms.member.entity.LoginHistory;
 import com.zerobase.fastlms.member.entity.Member;
 import com.zerobase.fastlms.member.entity.MemberCode;
 import com.zerobase.fastlms.member.exception.MemberNotEmailAuthException;
 import com.zerobase.fastlms.member.exception.MemberStopUserException;
 import com.zerobase.fastlms.member.model.MemberInput;
 import com.zerobase.fastlms.member.model.ResetPasswordInput;
+import com.zerobase.fastlms.member.repository.LoginHistoryRepository;
 import com.zerobase.fastlms.member.repository.MemberRepository;
 import com.zerobase.fastlms.util.PasswordUtils;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.jdbc.Null;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,12 +31,16 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Service
 @RequiredArgsConstructor
 
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
+
+    private final LoginHistoryRepository loginHistoryRepository;
     private final MailComponents mailComponents;
 
     private final MemberMapper memberMapper;
@@ -59,6 +67,7 @@ public class MemberServiceImpl implements MemberService {
                 .emailAuthYn(false)
                 .emailAuthKey(uuid)
                 .userStatus(Member.MEMBER_STATUS_REQ)
+                .lastLogin(LocalDateTime.now())  //마지막 접속일
                 .build();
         memberRepository.save(member);
         
@@ -178,6 +187,7 @@ public class MemberServiceImpl implements MemberService {
         long totalCount= memberMapper.selectListCount(parameter);
 
         List<MemberDto>list=memberMapper.selectList(parameter);
+
         if(!CollectionUtils.isEmpty(list)){
             int i=0;
             for(MemberDto x: list){
@@ -212,6 +222,7 @@ public class MemberServiceImpl implements MemberService {
         Member member=optionalMember.get();
 
         member.setUserStatus(userStatus);
+
         memberRepository.save(member);
 
         return true;
@@ -233,15 +244,51 @@ public class MemberServiceImpl implements MemberService {
         return true;
     }
 
+    public String getIpAddr() {
+        String ip_addr = null;
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = sra.getRequest();
 
+        ip_addr = request.getHeader("X-Forwarded-For");
+        if (ip_addr == null) {
+            ip_addr = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip_addr == null) {
+            ip_addr = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip_addr == null) {
+            ip_addr = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip_addr == null) {
+            ip_addr = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip_addr == null) {
+            ip_addr = request.getRemoteAddr();
+        }
+        return ip_addr;
+    }
+    public String getUserAgent() {
+        String userAgent = null;
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = sra.getRequest();
+
+        userAgent = request.getHeader("User-Agent");
+
+        return userAgent;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { //넘어오는 값은 username, 이메일임
+
         Optional<Member>  optionalMember=memberRepository.findById(username);
+
+
+
         if(!optionalMember.isPresent()){
             throw new UsernameNotFoundException("회원 정보가 존재하지 않습니다.");
         }
         Member member=optionalMember.get();
+
 
         if(Member.MEMBER_STATUS_REQ.equals(member.getUserStatus())){
             throw new MemberNotEmailAuthException("이메일 활성화 이후에 로그인을 해주세요.");
@@ -253,6 +300,31 @@ public class MemberServiceImpl implements MemberService {
         if(Member.MEMBER_STATUS_WITHDRAW.equals(member.getUserStatus())){
             throw new MemberStopUserException("탈퇴된 계정입니다.");
         }
+
+
+        member.setLastLogin(LocalDateTime.now());   //로그인시 접속한 시간 나타내기
+
+        member.setClientIp(getIpAddr());        // 접속 IP
+        member.setUserAgent(getUserAgent());   // 사용자 agent
+
+        memberRepository.save(member);
+
+
+
+        LoginHistory loginHistory=LoginHistory.builder()
+            .userId(member.getUserId())
+            .clientIp(member.getClientIp())
+            .userAgent(member.getUserAgent())
+            .lastLogin(member.getLastLogin())
+            .build();
+
+
+
+        loginHistoryRepository.save(loginHistory);
+
+
+
+
 
 
         List<GrantedAuthority> grantedAuthorities=new ArrayList<>();
@@ -324,6 +396,7 @@ public class MemberServiceImpl implements MemberService {
         return new ServiceResult();
     }
 
+
     @Override
     public ServiceResult updateMember(MemberInput parameter) {
         String userId=parameter.getUserId();
@@ -340,8 +413,20 @@ public class MemberServiceImpl implements MemberService {
         member.setAddr(parameter.getAddr());
         member.setAddrDetail(parameter.getAddrDetail());
 
+
         memberRepository.save(member);
         return new ServiceResult(true);
+    }
+
+    @Override
+    public boolean login(String userId) {
+        Optional<Member> optionalMember=memberRepository.findById(userId);
+        Member member=optionalMember.get();
+        member.setLastLogin(LocalDateTime.now());
+
+        memberRepository.save(member);
+
+        return true;
     }
 
 }

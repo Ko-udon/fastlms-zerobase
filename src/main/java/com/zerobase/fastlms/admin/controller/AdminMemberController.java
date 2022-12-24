@@ -1,9 +1,12 @@
 package com.zerobase.fastlms.admin.controller;
 
+import com.zerobase.fastlms.admin.dto.LoginHistoryDto;
 import com.zerobase.fastlms.admin.dto.MemberDto;
 import com.zerobase.fastlms.admin.model.MemberParam;
 import com.zerobase.fastlms.admin.model.MemberInput;
+import com.zerobase.fastlms.member.Service.LoginHistoryService;
 import com.zerobase.fastlms.member.Service.MemberService;
+import com.zerobase.fastlms.member.entity.LoginHistory;
 import com.zerobase.fastlms.util.PageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -19,6 +22,7 @@ public class AdminMemberController {
 
 
     private final MemberService memberService;
+    private final LoginHistoryService loginHistoryService;
 
 
     @GetMapping("/admin/member/list.do")
@@ -51,6 +55,10 @@ public class AdminMemberController {
         parameter.init();
         MemberDto member=memberService.detail(parameter.getUserId());
         model.addAttribute("member",member);
+
+
+        List<LoginHistoryDto> loginHistoryList=loginHistoryService.list(parameter);
+        model.addAttribute("loginHistory",loginHistoryList);
 
 
 

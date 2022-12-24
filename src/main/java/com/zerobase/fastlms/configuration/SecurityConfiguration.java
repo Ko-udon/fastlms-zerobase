@@ -1,6 +1,8 @@
 package com.zerobase.fastlms.configuration;
 
 import com.zerobase.fastlms.member.Service.MemberService;
+import com.zerobase.fastlms.member.entity.Member;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +25,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/favicon.ico","/files/**");
+        //web.ignoring().antMatchers("/files/**");
         super.configure(web);
     }
 
@@ -72,6 +75,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(memberService)
                 .passwordEncoder(getPasswordEncoder());
+
 
         super.configure(auth);
     }

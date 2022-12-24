@@ -48,6 +48,8 @@ public class Member implements MemberCode {
     private String addr;
     private String addrDetail;
 
-
+    private LocalDateTime lastLogin;
+    private String clientIp;
+    private String userAgent;
 
 }

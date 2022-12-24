@@ -13,6 +13,7 @@ import com.zerobase.fastlms.member.repository.MemberRepository;
 
 import com.zerobase.fastlms.util.PasswordUtils;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,8 @@ public class MemberController {
 
     private final MemberService memberService;
     private final TakeCourseService takeCourseService;
+
+    private final MemberRepository memberRepository;
 
     @GetMapping("/member/find-password")
     public String findPassword(){
@@ -55,10 +58,15 @@ public class MemberController {
         return "member/find_password_result";
 
     }
-
     @RequestMapping("/member/login")
-    public String login(){
+    public String login(HttpServletRequest request,Model model){
         //System.out.println("request GET!");
+
+
+
+        //System.out.println("아이디: "+userId);
+
+
         return "member/login";
     }
 

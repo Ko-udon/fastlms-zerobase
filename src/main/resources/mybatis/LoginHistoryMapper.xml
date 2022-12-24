@@ -2,20 +2,14 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zerobase.fastlms.admin.mapper.MemberMapper">
+<mapper namespace="com.zerobase.fastlms.admin.mapper.LoginHistoryMapper">
 
-    
+
     <sql id="selectListWhere">
         <if test="searchType != null and searchValue != null">
             <choose>
                 <when test="searchType == 'userId'">
                     and user_id like concat('%',#{searchValue},'%')
-                </when>
-                <when test="searchType == 'userName'">
-                    and user_name like concat('%',#{searchValue},'%')
-                </when>
-                <when test="searchType == 'phone'">
-                    and phone like concat('%',#{searchValue},'%')
                 </when>
 
                 <otherwise>
@@ -48,9 +42,9 @@
 
     <select id="selectList"
             parameterType="com.zerobase.fastlms.admin.model.MemberParam"
-            resultType="com.zerobase.fastlms.admin.dto.MemberDto">
+            resultType="com.zerobase.fastlms.admin.dto.LoginHistoryDto">
         select *
-        from member
+        from login_history
         where 1=1
 
 

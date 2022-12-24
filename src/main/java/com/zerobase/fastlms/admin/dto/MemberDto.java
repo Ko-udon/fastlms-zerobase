@@ -42,6 +42,11 @@ public class MemberDto {
 
     long seq;
 
+    //과제2
+    LocalDateTime lastLogin;
+    String clientIp;
+    String userAgent;
+
     public static MemberDto of(Member member){
         return MemberDto.builder()
             .userId(member.getUserId())
@@ -59,6 +64,7 @@ public class MemberDto {
             .zipcode(member.getZipcode())
             .addr(member.getAddr())
             .addrDetail(member.getAddrDetail())
+            .lastLogin(member.getLastLogin())  //마지막 접속 날짜
             .build();
     }
 
@@ -71,6 +77,11 @@ public class MemberDto {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
         return uptDt != null ? uptDt.format(formatter) : "";
+    }
+
+    public String getLastLogin() {
+        DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+        return lastLogin != null ? lastLogin.format(formatter) : "";
     }
 
 }
