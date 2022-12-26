@@ -10,9 +10,12 @@ import com.zerobase.fastlms.course.model.CourseInput;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
@@ -23,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
+
 public class AdminBannerController extends BaseController {
 
   private final BannerService bannerService;
@@ -58,8 +63,9 @@ public class AdminBannerController extends BaseController {
 
     BannerDto detail=new BannerDto();
 
-    if(editMode){  //강좌 수정
+    if(editMode){  //배너 수정
       long id=parameter.getId();
+      //System.out.println("%%%%%%%%%%%%%%% edit Id: " + id);
       BannerDto existBanner=bannerService.getById(id);
       if(existBanner==null){
         //error 처리
@@ -74,6 +80,41 @@ public class AdminBannerController extends BaseController {
     model.addAttribute("detail",detail);
     return "admin/banner/add";
   }
+  private String[] getNewSaveFile(String baseLocalPath, String baseUrlPath, String originalFilename){
+    LocalDate now=LocalDate.now();
+    String[] dirs = {
+        String.format("%s/%d/", baseLocalPath,now.getYear()),
+        String.format("%s/%d/%02d/", baseLocalPath, now.getYear(),now.getMonthValue()),
+        String.format("%s/%d/%02d/%02d/", baseLocalPath, now.getYear(), now.getMonthValue(), now.getDayOfMonth())};
+
+    String urlDir = String.format("%s/%d/%02d/%02d/", baseUrlPath, now.getYear(), now.getMonthValue(), now.getDayOfMonth());
+
+    for(String dir : dirs) {
+      File file = new File(dir);
+      if (!file.isDirectory()) {
+        file.mkdir();   //디렉토리가 없으면 생성하기
+      }
+    }
+    String fileExtension = "";
+    if (originalFilename != null) {
+      int dotPos = originalFilename.lastIndexOf(".");
+      if (dotPos > -1) {
+        fileExtension = originalFilename.substring(dotPos + 1);
+      }
+    }
+
+    String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+    String newFilename = String.format("%s%s", dirs[2], uuid);
+    String newUrlFilename = String.format("%s%s", urlDir, uuid);
+    if (fileExtension.length() > 0) {
+      newFilename += "." + fileExtension;
+      newUrlFilename += "." + fileExtension;
+    }
+
+    return new String[]{newFilename, newUrlFilename};
+
+
+  }
 
   @PostMapping({"/admin/banner/add.do","/admin/banner/edit.do"})
   public String addBannerSubmit(Model model, HttpServletRequest request, BannerInput parameter
@@ -82,7 +123,7 @@ public class AdminBannerController extends BaseController {
     String saveFilename = "";
     String urlFilename = "";
 
-    /*if (file != null) {
+    if (file != null) {
       String originalFilename = file.getOriginalFilename();
 
       String baseLocalPath = "D://IntelliJ/JavaWorkspace/fastlms-zerobase/files";
@@ -104,15 +145,20 @@ public class AdminBannerController extends BaseController {
     }
 
     parameter.setFilename(saveFilename);
-    parameter.setUrlFilename(urlFilename);*/
-    parameter.setId(1L);  //더미 데이터 필요,,
+    parameter.setUrlFilename(urlFilename);
+    if(parameter.getId()==null){
+      parameter.setId(1L);
+    }
+    //parameter.setId(1L);  //더미 데이터 필요,,
 
 
     boolean editMode=request.getRequestURI().contains("/edit.do");
 
-    if(editMode){  //강좌 수정
+    if(editMode){  //배너 수정
       long id=parameter.getId();
+      //System.out.println("%%%%%%%%%%%%%%% edit  addBannerSubmit Id: " + id);
       BannerDto existBanner=bannerService.getById(id);
+
       if(existBanner==null){
         //error 처리
         model.addAttribute("message","배너 정보가 존재하지 않습니다.");

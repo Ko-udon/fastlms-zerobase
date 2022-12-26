@@ -30,7 +30,6 @@ public class Banner {
 
   private String bannerName;
 
-  private String imgPath;
   private LocalDateTime regDt;
 
   private long seq;  //정렬 순서

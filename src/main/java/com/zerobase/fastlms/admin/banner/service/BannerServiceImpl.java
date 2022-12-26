@@ -42,21 +42,20 @@ public class BannerServiceImpl implements BannerService {
   @Override
   public boolean set(BannerInput parameter) {
     Optional<Banner> optionalBanner= bannerRepository.findById(parameter.getId());
-    //LocalDate saleEndDt=getLocalDate(parameter.getSaleEndDtText());
-
     if(!optionalBanner.isPresent()){
       return false;
     }
+
     Banner banner=optionalBanner.get();
     banner.setId(parameter.getId());
     banner.setBannerName(parameter.getBannerName());
-    banner.setRegDt(parameter.getRegDt());
+    //regDt는 set(update)해줄필요 없음
+    banner.setSeq(parameter.getSeq());
     banner.setOpenType(parameter.getOpenType());
     banner.setUrlName(parameter.getUrlName());
     banner.setPublic(parameter.isPublic());
     banner.setFilename(parameter.getFilename());
     banner.setUrlFilename(parameter.getUrlFilename());
-
 
     bannerRepository.save(banner);
     return true;
@@ -64,8 +63,6 @@ public class BannerServiceImpl implements BannerService {
 
   @Override
   public boolean add(BannerInput parameter) {
-
-
     Banner banner= Banner.builder()
         .id(parameter.getId())
         .bannerName(parameter.getBannerName())
@@ -75,11 +72,10 @@ public class BannerServiceImpl implements BannerService {
         .isPublic(parameter.isPublic())
         .filename(parameter.getFilename())
         .urlFilename(parameter.getUrlFilename())
+        .seq(parameter.getSeq())
         .build();
 
     bannerRepository.save(banner);
-
-
     return true;
   }
 
@@ -89,7 +85,6 @@ public class BannerServiceImpl implements BannerService {
     long totalCount= bannerMapper.selectListCount(parameter);
 
     List<BannerDto>list=bannerMapper.selectList(parameter);
-
 
     if(!CollectionUtils.isEmpty(list)){
       int i=0;

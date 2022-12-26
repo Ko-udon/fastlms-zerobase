@@ -46,13 +46,10 @@ public class BannerDto {
     return regDt != null ? regDt.format(formatter) : "";
   }
 
-
-
   public static BannerDto of(Banner banner) {
     return BannerDto.builder()
         .id(banner.getId())
         .bannerName(banner.getBannerName())
-        .imgPath(banner.getImgPath())
         .regDt(banner.getRegDt())
         .seq(banner.getSeq())
         .openType(banner.getOpenType())

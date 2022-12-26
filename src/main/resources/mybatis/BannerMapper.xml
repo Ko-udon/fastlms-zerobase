@@ -56,4 +56,11 @@
 
     </select>
 
+    <select id="selectMainBanner"
+        resultType="com.zerobase.fastlms.admin.banner.dto.BannerDto">
+        select url_filename
+        from banner
+        where is_public = true
+        order by seq asc
+    </select>
 </mapper>

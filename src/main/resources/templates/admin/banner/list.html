@@ -136,11 +136,16 @@
         <input type="checkbox" th:value="${x.id}" />
       </td>
       <td th:text="${x.id}">1</td>
-      <td th:text="${x.bannerName}">1</td>
 
       <td>
         <p>
-          이미지
+          <a th:href="'edit.do?id=' + ${x.id}" th:text="${x.bannerName}">배너명</a>
+        </p>
+      </td>
+
+      <td>
+        <p>
+          <img th:src="${x.urlFilename}"/>
         </p>
       </td>
       <td>

@@ -1,9 +1,14 @@
 package com.zerobase.fastlms.main.controller;
 
+import com.zerobase.fastlms.admin.banner.dto.BannerDto;
+import com.zerobase.fastlms.admin.banner.mapper.BannerMapper;
+import com.zerobase.fastlms.admin.banner.model.BannerParam;
+import com.zerobase.fastlms.admin.banner.service.BannerService;
 import com.zerobase.fastlms.components.MailComponents;
 import com.zerobase.fastlms.member.entity.Member;
 import com.zerobase.fastlms.member.repository.MemberRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import lombok.Data;
@@ -13,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.RequestUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
+import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -23,6 +30,8 @@ public class MainController {
 
     private final MailComponents mailComponents;
     private final MemberRepository memberRepository;
+    private final BannerMapper bannerMapper;
+    private final BannerService bannerService;
 
     String userAgent;
     String clientIp;
@@ -31,7 +40,7 @@ public class MainController {
 
 
     @RequestMapping("/")
-    public String index(HttpServletRequest request){
+    public String index(HttpServletRequest request,Model model, BannerParam parameter){
         //과제 1
 
         userAgent=request.getHeader("User-Agent");
@@ -65,18 +74,10 @@ public class MainController {
         log.info(clientIp);
 
 
-        /*String id=request.getParameter("username");
-        if(id!=null){
-            Optional<Member> optionalMember=memberRepository.findById(request.getParameter("username"));
-            Member member=optionalMember.get();
-            member.setUserAgent(userAgent);
-            member.setClientIp(clientIp);
-            memberRepository.save(member);
+        parameter.init();
 
-
-        }else{
-            System.out.println("id가 null 입니다#########");
-        }*/
+        List<BannerDto> bannerList=bannerMapper.selectMainBanner(parameter);
+        model.addAttribute("bannerList",bannerList);
 
 
         return "index";
